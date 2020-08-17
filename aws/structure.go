@@ -3659,36 +3659,36 @@ func expandMqUsers(cfg []interface{}) []*mq.User {
 }
 
 // We use cfgdUsers to get & set the password
-func flattenMqUsers(users []*mq.User, cfgUsers []interface{}) *schema.Set {
-	existingPairs := make(map[string]string)
-	for _, u := range cfgUsers {
-		user := u.(map[string]interface{})
-		username := user["username"].(string)
-		existingPairs[username] = user["password"].(string)
-	}
-
-	out := make([]interface{}, 0)
-	for _, u := range users {
-		m := map[string]interface{}{
-			"username": *u.Username,
-		}
-		password := ""
-		if p, ok := existingPairs[*u.Username]; ok {
-			password = p
-		}
-		if password != "" {
-			m["password"] = password
-		}
-		if u.ConsoleAccess != nil {
-			m["console_access"] = *u.ConsoleAccess
-		}
-		if len(u.Groups) > 0 {
-			m["groups"] = schema.NewSet(schema.HashString, flattenStringList(u.Groups))
-		}
-		out = append(out, m)
-	}
-	return schema.NewSet(resourceAwsMqUserHash, out)
-}
+//func flattenMqUsers(users []*mq.User, cfgUsers []interface{}) *schema.Set {
+//	existingPairs := make(map[string]string)
+//	for _, u := range cfgUsers {
+//		user := u.(map[string]interface{})
+//		username := user["username"].(string)
+//		existingPairs[username] = user["password"].(string)
+//	}
+//
+//	out := make([]interface{}, 0)
+//	for _, u := range users {
+//		m := map[string]interface{}{
+//			"username": *u.Username,
+//		}
+//		password := ""
+//		if p, ok := existingPairs[*u.Username]; ok {
+//			password = p
+//		}
+//		if password != "" {
+//			m["password"] = password
+//		}
+//		if u.ConsoleAccess != nil {
+//			m["console_access"] = *u.ConsoleAccess
+//		}
+//		if len(u.Groups) > 0 {
+//			m["groups"] = schema.NewSet(schema.HashString, flattenStringList(u.Groups))
+//		}
+//		out = append(out, m)
+//	}
+//	return schema.NewSet(resourceAwsMqUserHash, out)
+//}
 
 func expandMqWeeklyStartTime(cfg []interface{}) *mq.WeeklyStartTime {
 	if len(cfg) < 1 {
@@ -4831,109 +4831,109 @@ func expandAppmeshVirtualNodeSpec(vSpec []interface{}) *appmesh.VirtualNodeSpec 
 	return spec
 }
 
-func flattenAppmeshVirtualNodeSpec(spec *appmesh.VirtualNodeSpec) []interface{} {
-	if spec == nil {
-		return []interface{}{}
-	}
-
-	mSpec := map[string]interface{}{}
-
-	if spec.Backends != nil {
-		vBackends := []interface{}{}
-
-		for _, backend := range spec.Backends {
-			mBackend := map[string]interface{}{}
-
-			if backend.VirtualService != nil {
-				mVirtualService := map[string]interface{}{
-					"virtual_service_name": aws.StringValue(backend.VirtualService.VirtualServiceName),
-				}
-				mBackend["virtual_service"] = []interface{}{mVirtualService}
-			}
-
-			vBackends = append(vBackends, mBackend)
-		}
-
-		mSpec["backend"] = schema.NewSet(appmeshVirtualNodeBackendHash, vBackends)
-	}
-
-	if spec.Listeners != nil && spec.Listeners[0] != nil {
-		// Per schema definition, set at most 1 Listener
-		listener := spec.Listeners[0]
-		mListener := map[string]interface{}{}
-
-		if listener.HealthCheck != nil {
-			mHealthCheck := map[string]interface{}{
-				"healthy_threshold":   int(aws.Int64Value(listener.HealthCheck.HealthyThreshold)),
-				"interval_millis":     int(aws.Int64Value(listener.HealthCheck.IntervalMillis)),
-				"path":                aws.StringValue(listener.HealthCheck.Path),
-				"port":                int(aws.Int64Value(listener.HealthCheck.Port)),
-				"protocol":            aws.StringValue(listener.HealthCheck.Protocol),
-				"timeout_millis":      int(aws.Int64Value(listener.HealthCheck.TimeoutMillis)),
-				"unhealthy_threshold": int(aws.Int64Value(listener.HealthCheck.UnhealthyThreshold)),
-			}
-			mListener["health_check"] = []interface{}{mHealthCheck}
-		}
-
-		if listener.PortMapping != nil {
-			mPortMapping := map[string]interface{}{
-				"port":     int(aws.Int64Value(listener.PortMapping.Port)),
-				"protocol": aws.StringValue(listener.PortMapping.Protocol),
-			}
-			mListener["port_mapping"] = []interface{}{mPortMapping}
-		}
-
-		mSpec["listener"] = []interface{}{mListener}
-	}
-
-	if spec.Logging != nil && spec.Logging.AccessLog != nil && spec.Logging.AccessLog.File != nil {
-		mSpec["logging"] = []interface{}{
-			map[string]interface{}{
-				"access_log": []interface{}{
-					map[string]interface{}{
-						"file": []interface{}{
-							map[string]interface{}{
-								"path": aws.StringValue(spec.Logging.AccessLog.File.Path),
-							},
-						},
-					},
-				},
-			},
-		}
-	}
-
-	if spec.ServiceDiscovery != nil {
-		mServiceDiscovery := map[string]interface{}{}
-
-		if spec.ServiceDiscovery.AwsCloudMap != nil {
-			vAttributes := map[string]interface{}{}
-
-			for _, attribute := range spec.ServiceDiscovery.AwsCloudMap.Attributes {
-				vAttributes[aws.StringValue(attribute.Key)] = aws.StringValue(attribute.Value)
-			}
-
-			mServiceDiscovery["aws_cloud_map"] = []interface{}{
-				map[string]interface{}{
-					"attributes":     vAttributes,
-					"namespace_name": aws.StringValue(spec.ServiceDiscovery.AwsCloudMap.NamespaceName),
-					"service_name":   aws.StringValue(spec.ServiceDiscovery.AwsCloudMap.ServiceName),
-				},
-			}
-		}
-
-		if spec.ServiceDiscovery.Dns != nil {
-			mServiceDiscovery["dns"] = []interface{}{
-				map[string]interface{}{
-					"hostname": aws.StringValue(spec.ServiceDiscovery.Dns.Hostname),
-				},
-			}
-		}
-
-		mSpec["service_discovery"] = []interface{}{mServiceDiscovery}
-	}
-
-	return []interface{}{mSpec}
-}
+//func flattenAppmeshVirtualNodeSpec(spec *appmesh.VirtualNodeSpec) []interface{} {
+//	if spec == nil {
+//		return []interface{}{}
+//	}
+//
+//	mSpec := map[string]interface{}{}
+//
+//	if spec.Backends != nil {
+//		vBackends := []interface{}{}
+//
+//		for _, backend := range spec.Backends {
+//			mBackend := map[string]interface{}{}
+//
+//			if backend.VirtualService != nil {
+//				mVirtualService := map[string]interface{}{
+//					"virtual_service_name": aws.StringValue(backend.VirtualService.VirtualServiceName),
+//				}
+//				mBackend["virtual_service"] = []interface{}{mVirtualService}
+//			}
+//
+//			vBackends = append(vBackends, mBackend)
+//		}
+//
+//		mSpec["backend"] = schema.NewSet(appmeshVirtualNodeBackendHash, vBackends)
+//	}
+//
+//	if spec.Listeners != nil && spec.Listeners[0] != nil {
+//		// Per schema definition, set at most 1 Listener
+//		listener := spec.Listeners[0]
+//		mListener := map[string]interface{}{}
+//
+//		if listener.HealthCheck != nil {
+//			mHealthCheck := map[string]interface{}{
+//				"healthy_threshold":   int(aws.Int64Value(listener.HealthCheck.HealthyThreshold)),
+//				"interval_millis":     int(aws.Int64Value(listener.HealthCheck.IntervalMillis)),
+//				"path":                aws.StringValue(listener.HealthCheck.Path),
+//				"port":                int(aws.Int64Value(listener.HealthCheck.Port)),
+//				"protocol":            aws.StringValue(listener.HealthCheck.Protocol),
+//				"timeout_millis":      int(aws.Int64Value(listener.HealthCheck.TimeoutMillis)),
+//				"unhealthy_threshold": int(aws.Int64Value(listener.HealthCheck.UnhealthyThreshold)),
+//			}
+//			mListener["health_check"] = []interface{}{mHealthCheck}
+//		}
+//
+//		if listener.PortMapping != nil {
+//			mPortMapping := map[string]interface{}{
+//				"port":     int(aws.Int64Value(listener.PortMapping.Port)),
+//				"protocol": aws.StringValue(listener.PortMapping.Protocol),
+//			}
+//			mListener["port_mapping"] = []interface{}{mPortMapping}
+//		}
+//
+//		mSpec["listener"] = []interface{}{mListener}
+//	}
+//
+//	if spec.Logging != nil && spec.Logging.AccessLog != nil && spec.Logging.AccessLog.File != nil {
+//		mSpec["logging"] = []interface{}{
+//			map[string]interface{}{
+//				"access_log": []interface{}{
+//					map[string]interface{}{
+//						"file": []interface{}{
+//							map[string]interface{}{
+//								"path": aws.StringValue(spec.Logging.AccessLog.File.Path),
+//							},
+//						},
+//					},
+//				},
+//			},
+//		}
+//	}
+//
+//	if spec.ServiceDiscovery != nil {
+//		mServiceDiscovery := map[string]interface{}{}
+//
+//		if spec.ServiceDiscovery.AwsCloudMap != nil {
+//			vAttributes := map[string]interface{}{}
+//
+//			for _, attribute := range spec.ServiceDiscovery.AwsCloudMap.Attributes {
+//				vAttributes[aws.StringValue(attribute.Key)] = aws.StringValue(attribute.Value)
+//			}
+//
+//			mServiceDiscovery["aws_cloud_map"] = []interface{}{
+//				map[string]interface{}{
+//					"attributes":     vAttributes,
+//					"namespace_name": aws.StringValue(spec.ServiceDiscovery.AwsCloudMap.NamespaceName),
+//					"service_name":   aws.StringValue(spec.ServiceDiscovery.AwsCloudMap.ServiceName),
+//				},
+//			}
+//		}
+//
+//		if spec.ServiceDiscovery.Dns != nil {
+//			mServiceDiscovery["dns"] = []interface{}{
+//				map[string]interface{}{
+//					"hostname": aws.StringValue(spec.ServiceDiscovery.Dns.Hostname),
+//				},
+//			}
+//		}
+//
+//		mSpec["service_discovery"] = []interface{}{mServiceDiscovery}
+//	}
+//
+//	return []interface{}{mSpec}
+//}
 
 func expandAppmeshVirtualServiceSpec(vSpec []interface{}) *appmesh.VirtualServiceSpec {
 	spec := &appmesh.VirtualServiceSpec{}
@@ -5158,113 +5158,113 @@ func expandAppmeshRouteSpec(vSpec []interface{}) *appmesh.RouteSpec {
 	return spec
 }
 
-func flattenAppmeshRouteSpec(spec *appmesh.RouteSpec) []interface{} {
-	if spec == nil {
-		return []interface{}{}
-	}
-
-	mSpec := map[string]interface{}{
-		"priority": int(aws.Int64Value(spec.Priority)),
-	}
-
-	if httpRoute := spec.HttpRoute; httpRoute != nil {
-		mHttpRoute := map[string]interface{}{}
-
-		if action := httpRoute.Action; action != nil {
-			if weightedTargets := action.WeightedTargets; weightedTargets != nil {
-				vWeightedTargets := []interface{}{}
-
-				for _, weightedTarget := range weightedTargets {
-					mWeightedTarget := map[string]interface{}{
-						"virtual_node": aws.StringValue(weightedTarget.VirtualNode),
-						"weight":       int(aws.Int64Value(weightedTarget.Weight)),
-					}
-
-					vWeightedTargets = append(vWeightedTargets, mWeightedTarget)
-				}
-
-				mHttpRoute["action"] = []interface{}{
-					map[string]interface{}{
-						"weighted_target": schema.NewSet(appmeshWeightedTargetHash, vWeightedTargets),
-					},
-				}
-			}
-		}
-
-		if httpRouteMatch := httpRoute.Match; httpRouteMatch != nil {
-			vHttpRouteHeaders := []interface{}{}
-
-			for _, httpRouteHeader := range httpRouteMatch.Headers {
-				mHttpRouteHeader := map[string]interface{}{
-					"invert": aws.BoolValue(httpRouteHeader.Invert),
-					"name":   aws.StringValue(httpRouteHeader.Name),
-				}
-
-				if match := httpRouteHeader.Match; match != nil {
-					mMatch := map[string]interface{}{
-						"exact":  aws.StringValue(match.Exact),
-						"prefix": aws.StringValue(match.Prefix),
-						"regex":  aws.StringValue(match.Regex),
-						"suffix": aws.StringValue(match.Suffix),
-					}
-
-					if r := match.Range; r != nil {
-						mRange := map[string]interface{}{
-							"end":   int(aws.Int64Value(r.End)),
-							"start": int(aws.Int64Value(r.Start)),
-						}
-
-						mMatch["range"] = []interface{}{mRange}
-					}
-
-					mHttpRouteHeader["match"] = []interface{}{mMatch}
-				}
-
-				vHttpRouteHeaders = append(vHttpRouteHeaders, mHttpRouteHeader)
-			}
-
-			mHttpRoute["match"] = []interface{}{
-				map[string]interface{}{
-					"header": schema.NewSet(appmeshHttpRouteHeaderHash, vHttpRouteHeaders),
-					"method": aws.StringValue(httpRouteMatch.Method),
-					"prefix": aws.StringValue(httpRouteMatch.Prefix),
-					"scheme": aws.StringValue(httpRouteMatch.Scheme),
-				},
-			}
-		}
-
-		mSpec["http_route"] = []interface{}{mHttpRoute}
-	}
-
-	if tcpRoute := spec.TcpRoute; tcpRoute != nil {
-		mTcpRoute := map[string]interface{}{}
-
-		if action := tcpRoute.Action; action != nil {
-			if weightedTargets := action.WeightedTargets; weightedTargets != nil {
-				vWeightedTargets := []interface{}{}
-
-				for _, weightedTarget := range weightedTargets {
-					mWeightedTarget := map[string]interface{}{
-						"virtual_node": aws.StringValue(weightedTarget.VirtualNode),
-						"weight":       int(aws.Int64Value(weightedTarget.Weight)),
-					}
-
-					vWeightedTargets = append(vWeightedTargets, mWeightedTarget)
-				}
-
-				mTcpRoute["action"] = []interface{}{
-					map[string]interface{}{
-						"weighted_target": schema.NewSet(appmeshWeightedTargetHash, vWeightedTargets),
-					},
-				}
-			}
-		}
-
-		mSpec["tcp_route"] = []interface{}{mTcpRoute}
-	}
-
-	return []interface{}{mSpec}
-}
+//func flattenAppmeshRouteSpec(spec *appmesh.RouteSpec) []interface{} {
+//	if spec == nil {
+//		return []interface{}{}
+//	}
+//
+//	mSpec := map[string]interface{}{
+//		"priority": int(aws.Int64Value(spec.Priority)),
+//	}
+//
+//	if httpRoute := spec.HttpRoute; httpRoute != nil {
+//		mHttpRoute := map[string]interface{}{}
+//
+//		if action := httpRoute.Action; action != nil {
+//			if weightedTargets := action.WeightedTargets; weightedTargets != nil {
+//				vWeightedTargets := []interface{}{}
+//
+//				for _, weightedTarget := range weightedTargets {
+//					mWeightedTarget := map[string]interface{}{
+//						"virtual_node": aws.StringValue(weightedTarget.VirtualNode),
+//						"weight":       int(aws.Int64Value(weightedTarget.Weight)),
+//					}
+//
+//					vWeightedTargets = append(vWeightedTargets, mWeightedTarget)
+//				}
+//
+//				mHttpRoute["action"] = []interface{}{
+//					map[string]interface{}{
+//						"weighted_target": schema.NewSet(appmeshWeightedTargetHash, vWeightedTargets),
+//					},
+//				}
+//			}
+//		}
+//
+//		if httpRouteMatch := httpRoute.Match; httpRouteMatch != nil {
+//			vHttpRouteHeaders := []interface{}{}
+//
+//			for _, httpRouteHeader := range httpRouteMatch.Headers {
+//				mHttpRouteHeader := map[string]interface{}{
+//					"invert": aws.BoolValue(httpRouteHeader.Invert),
+//					"name":   aws.StringValue(httpRouteHeader.Name),
+//				}
+//
+//				if match := httpRouteHeader.Match; match != nil {
+//					mMatch := map[string]interface{}{
+//						"exact":  aws.StringValue(match.Exact),
+//						"prefix": aws.StringValue(match.Prefix),
+//						"regex":  aws.StringValue(match.Regex),
+//						"suffix": aws.StringValue(match.Suffix),
+//					}
+//
+//					if r := match.Range; r != nil {
+//						mRange := map[string]interface{}{
+//							"end":   int(aws.Int64Value(r.End)),
+//							"start": int(aws.Int64Value(r.Start)),
+//						}
+//
+//						mMatch["range"] = []interface{}{mRange}
+//					}
+//
+//					mHttpRouteHeader["match"] = []interface{}{mMatch}
+//				}
+//
+//				vHttpRouteHeaders = append(vHttpRouteHeaders, mHttpRouteHeader)
+//			}
+//
+//			mHttpRoute["match"] = []interface{}{
+//				map[string]interface{}{
+//					"header": schema.NewSet(appmeshHttpRouteHeaderHash, vHttpRouteHeaders),
+//					"method": aws.StringValue(httpRouteMatch.Method),
+//					"prefix": aws.StringValue(httpRouteMatch.Prefix),
+//					"scheme": aws.StringValue(httpRouteMatch.Scheme),
+//				},
+//			}
+//		}
+//
+//		mSpec["http_route"] = []interface{}{mHttpRoute}
+//	}
+//
+//	if tcpRoute := spec.TcpRoute; tcpRoute != nil {
+//		mTcpRoute := map[string]interface{}{}
+//
+//		if action := tcpRoute.Action; action != nil {
+//			if weightedTargets := action.WeightedTargets; weightedTargets != nil {
+//				vWeightedTargets := []interface{}{}
+//
+//				for _, weightedTarget := range weightedTargets {
+//					mWeightedTarget := map[string]interface{}{
+//						"virtual_node": aws.StringValue(weightedTarget.VirtualNode),
+//						"weight":       int(aws.Int64Value(weightedTarget.Weight)),
+//					}
+//
+//					vWeightedTargets = append(vWeightedTargets, mWeightedTarget)
+//				}
+//
+//				mTcpRoute["action"] = []interface{}{
+//					map[string]interface{}{
+//						"weighted_target": schema.NewSet(appmeshWeightedTargetHash, vWeightedTargets),
+//					},
+//				}
+//			}
+//		}
+//
+//		mSpec["tcp_route"] = []interface{}{mTcpRoute}
+//	}
+//
+//	return []interface{}{mSpec}
+//}
 
 func expandRoute53ResolverEndpointIpAddresses(vIpAddresses *schema.Set) []*route53resolver.IpAddressRequest {
 	ipAddressRequests := []*route53resolver.IpAddressRequest{}

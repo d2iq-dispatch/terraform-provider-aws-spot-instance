@@ -187,16 +187,16 @@ func validateNeptuneEngine() schema.SchemaValidateFunc {
 	}, false)
 }
 
-func validateASGScheduleTimestamp(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	_, err := time.Parse(awsAutoscalingScheduleTimeLayout, value)
-	if err != nil {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be parsed as iso8601 Timestamp Format", value))
-	}
-
-	return
-}
+//func validateASGScheduleTimestamp(v interface{}, k string) (ws []string, errors []error) {
+//	value := v.(string)
+//	_, err := time.Parse(awsAutoscalingScheduleTimeLayout, value)
+//	if err != nil {
+//		errors = append(errors, fmt.Errorf(
+//			"%q cannot be parsed as iso8601 Timestamp Format", value))
+//	}
+//
+//	return
+//}
 
 // validateTagFilters confirms the "value" component of a tag filter is one of
 // AWS's three allowed types.
