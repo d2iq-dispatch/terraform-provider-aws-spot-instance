@@ -59,6 +59,10 @@ func resourceAwsSpotInstanceRequest() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			}
+			s["allow_unfulfilled"] = &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+			}
 			s["launch_group"] = &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -225,9 +229,16 @@ func resourceAwsSpotInstanceRequestCreate(d *schema.ResourceData, meta interface
 
 		log.Printf("[DEBUG] waiting for spot bid to resolve... this may take several minutes.")
 		_, err = spotStateConf.WaitForState()
-
-		if err != nil {
+		allowUnfulfilled := d.Get("allow_unfulfilled").(bool)
+		if err != nil && !allowUnfulfilled {
 			return fmt.Errorf("Error while waiting for spot request (%s) to resolve: %s", sir, err)
+		} else if err != nil && allowUnfulfilled {
+			log.Printf("[Error] Error while waiting for spot request (%s) to resolve: %s", sir, err)
+			d.Set("spot_instance_id", "unfulfilled")
+			d.Set("public_dns", "unfulfilled")
+			d.Set("public_ip", "unfulfilled")
+			d.Set("private_dns", "unfulfilled")
+			d.Set("private_ip", "unfulfilled")
 		}
 	}
 
@@ -303,8 +314,12 @@ func resourceAwsSpotInstanceRequestRead(d *schema.ResourceData, meta interface{}
 
 func readInstance(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
-
-	instance, err := resourceAwsInstanceFindByID(conn, d.Get("spot_instance_id").(string))
+	instanceID := d.Get("spot_instance_id").(string)
+	// if the request is unfulfilled we don't need to go pull instance data
+	if instanceID == "unfulfilled" {
+		return nil
+	}
+	instance, err := resourceAwsInstanceFindByID(conn, instanceID)
 	if err != nil {
 		// If the instance was not found, return nil so that we can show
 		// that the instance is gone.
@@ -327,7 +342,12 @@ func readInstance(d *schema.ResourceData, meta interface{}) error {
 		d.Set("public_ip", instance.PublicIpAddress)
 		d.Set("private_dns", instance.PrivateDnsName)
 		d.Set("private_ip", instance.PrivateIpAddress)
-
+		// If we don't have tags on this instance and there are tags specified put them on
+		if v := d.Get("tags").(map[string]interface{}); len(instance.Tags) != len(v) && len(v) > 0 {
+			if err := keyvaluetags.Ec2CreateTags(conn, instanceID, v); err != nil {
+				return fmt.Errorf("error adding Tags to corresponding EC2 Instance (%s) tags: %s", instanceID, err)
+			}
+		}
 		// set connection information
 		if instance.PublicIpAddress != nil {
 			d.SetConnInfo(map[string]string{
