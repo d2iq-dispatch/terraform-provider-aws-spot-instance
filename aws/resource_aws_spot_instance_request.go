@@ -62,6 +62,7 @@ func resourceAwsSpotInstanceRequest() *schema.Resource {
 			s["allow_unfulfilled"] = &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  false,
 			}
 			s["launch_group"] = &schema.Schema{
 				Type:     schema.TypeString,
@@ -428,7 +429,7 @@ func resourceAwsSpotInstanceRequestDelete(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error cancelling spot request (%s): %s", d.Id(), err)
 	}
 
-	if instanceId := d.Get("spot_instance_id").(string); instanceId != "" {
+	if instanceId := d.Get("spot_instance_id").(string); instanceId != "" && instanceId != "unfulfilled" {
 		log.Printf("[INFO] Terminating instance: %s", instanceId)
 		if err := awsTerminateInstance(conn, instanceId, d.Timeout(schema.TimeoutDelete)); err != nil {
 			return fmt.Errorf("Error terminating spot instance: %s", err)
