@@ -1,4 +1,4 @@
-module github.com/terraform-providers/terraform-provider-aws
+module github.com/faiq/aws-spot-instance-plugin
 
 go 1.14
 
