@@ -3,8 +3,8 @@ package aws
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/faiq/aws-spot-instance-plugin/aws/internal/keyvaluetags"
 )
 
 // tagsSchema returns the schema to use for tags.

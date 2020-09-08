@@ -151,9 +151,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/workmail"
 	"github.com/aws/aws-sdk-go/service/workspaces"
 	"github.com/aws/aws-sdk-go/service/xray"
+	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
 	awsbase "github.com/hashicorp/aws-sdk-go-base"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/logging"
-	"github.com/faiq/aws-spot-instance-plugin/aws/internal/keyvaluetags"
 )
 
 type Config struct {

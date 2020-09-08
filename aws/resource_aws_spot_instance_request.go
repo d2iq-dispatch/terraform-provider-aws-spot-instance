@@ -8,10 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
-	"github.com/faiq/aws-spot-instance-plugin/aws/internal/keyvaluetags"
 )
 
 func resourceAwsSpotInstanceRequest() *schema.Resource {

@@ -1,4 +1,4 @@
-module github.com/faiq/aws-spot-instance-plugin
+module github.com/faiq/terraform-provider-aws-spot-instance
 
 go 1.14
 
@@ -8,6 +8,7 @@ require (
 	github.com/bflad/tfproviderdocs v0.7.0
 	github.com/bflad/tfproviderlint v0.15.0
 	github.com/client9/misspell v0.3.4
+	github.com/faiq/aws-spot-instance-plugin v0.0.0-20200902182610-dc62b4a6eacf
 	github.com/golangci/golangci-lint v1.29.0
 	github.com/hashicorp/aws-sdk-go-base v0.5.0
 	github.com/hashicorp/go-cleanhttp v0.5.1

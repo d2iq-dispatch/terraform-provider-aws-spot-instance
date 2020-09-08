@@ -6,9 +6,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
+	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
+	tfec2 "github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/service/ec2"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/faiq/aws-spot-instance-plugin/aws/internal/keyvaluetags"
-	tfec2 "github.com/faiq/aws-spot-instance-plugin/aws/internal/service/ec2"
 )
 
 // buildEC2AttributeFilterList takes a flat map of scalar attributes (most
