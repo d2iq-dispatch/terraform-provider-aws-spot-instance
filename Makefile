@@ -16,3 +16,6 @@ fmtcheck:
 
 gencheck:
 .PHONY: build gen fmt fmtcheck
+
+terraform-provider-aws-spot-instance:
+	go build
