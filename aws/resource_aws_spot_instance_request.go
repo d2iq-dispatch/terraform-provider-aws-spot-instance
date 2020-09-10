@@ -235,11 +235,11 @@ func resourceAwsSpotInstanceRequestCreate(d *schema.ResourceData, meta interface
 			return fmt.Errorf("Error while waiting for spot request (%s) to resolve: %s", sir, err)
 		} else if err != nil && allowUnfulfilled {
 			log.Printf("[Error] Error while waiting for spot request (%s) to resolve: %s", sir, err)
-			d.Set("spot_instance_id", "unfulfilled")
-			d.Set("public_dns", "unfulfilled")
-			d.Set("public_ip", "unfulfilled")
-			d.Set("private_dns", "unfulfilled")
-			d.Set("private_ip", "unfulfilled")
+			d.Set("spot_instance_id", "")
+			d.Set("public_dns", "")
+			d.Set("public_ip", "")
+			d.Set("private_dns", "")
+			d.Set("private_ip", "")
 		}
 	}
 
@@ -317,7 +317,7 @@ func readInstance(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 	instanceID := d.Get("spot_instance_id").(string)
 	// if the request is unfulfilled we don't need to go pull instance data
-	if instanceID == "unfulfilled" {
+	if instanceID == "" {
 		return nil
 	}
 	instance, err := resourceAwsInstanceFindByID(conn, instanceID)
@@ -429,7 +429,7 @@ func resourceAwsSpotInstanceRequestDelete(d *schema.ResourceData, meta interface
 		return fmt.Errorf("Error cancelling spot request (%s): %s", d.Id(), err)
 	}
 
-	if instanceId := d.Get("spot_instance_id").(string); instanceId != "" && instanceId != "unfulfilled" {
+	if instanceId := d.Get("spot_instance_id").(string); instanceId != "" {
 		log.Printf("[INFO] Terminating instance: %s", instanceId)
 		if err := awsTerminateInstance(conn, instanceId, d.Timeout(schema.TimeoutDelete)); err != nil {
 			return fmt.Errorf("Error terminating spot instance: %s", err)
