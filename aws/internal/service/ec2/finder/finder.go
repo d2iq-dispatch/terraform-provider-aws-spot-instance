@@ -3,7 +3,7 @@ package finder
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	tfec2 "github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/service/ec2"
+	tfec2 "github.com/d2iq-dispatch/terraform-provider-aws-spot-instance/aws/internal/service/ec2"
 )
 
 func ClientVpnAuthorizationRule(conn *ec2.EC2, endpointID, targetNetworkCidr, accessGroupID string) (*ec2.DescribeClientVpnAuthorizationRulesOutput, error) {

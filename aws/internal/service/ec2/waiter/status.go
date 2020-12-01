@@ -5,8 +5,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	tfec2 "github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/service/ec2"
-	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/service/ec2/finder"
+	tfec2 "github.com/d2iq-dispatch/terraform-provider-aws-spot-instance/aws/internal/service/ec2"
+	"github.com/d2iq-dispatch/terraform-provider-aws-spot-instance/aws/internal/service/ec2/finder"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 )
 

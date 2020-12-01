@@ -7,6 +7,7 @@ terraform.tfstate
 bin/
 dist/
 modules-dev/
+vendor/
 /pkg/
 website/.vagrant
 website/.bundle
@@ -27,6 +28,7 @@ website/node_modules
 *.iml
 log.txt
 markdown-link-check*.txt
+terraform-provider-aws-spot-instance
 website/vendor
 
 # Test exclusions

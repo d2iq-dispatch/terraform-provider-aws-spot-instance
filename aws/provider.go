@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 
-	"github.com/faiq/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
+	"github.com/d2iq-dispatch/terraform-provider-aws-spot-instance/aws/internal/keyvaluetags"
 )
 
 // Provider returns a terraform.ResourceProvider.
